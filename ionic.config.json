@@ -1,0 +1,7 @@
+{
+  "name": "PHAS0052_website",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
