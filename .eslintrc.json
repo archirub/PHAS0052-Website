@@ -14,8 +14,10 @@
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
+        "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/naming-convention": "off",
         "@angular-eslint/component-class-suffix": [
-          "error",
+          "warn",
           {
             "suffixes": ["Page", "Component"]
           }

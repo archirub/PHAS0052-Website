@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Component, OnInit } from '@angular/core';
+import {
+  HistoryDataService,
+  plotableProps,
+  ScatterData,
+} from './history-data.service';
 
-import * as XLSX from 'xlsx';
 import * as chartJS from 'chart.js';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -10,74 +16,80 @@ import * as chartJS from 'chart.js';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  CLFV_table: JSON[];
-  chart_options = {
+  CLFV_table: chartJS.ChartData;
+  chart_options: chartJS.ChartOptions = {
     scales: {
       x: {
-        type: 'linear',
+        display: true,
+        // title: 'ASDKALSDJLAJs',
         position: 'bottom',
+        title: {
+          display: true,
+          text: 'Year',
+        },
+      },
+
+      y: {
+        display: true,
+        // type: 'logarithmic',
+        ticks: {
+          // Include a dollar sign in the ticks
+          callback: (value, index, ticks) => '10E' + value,
+        },
+        title: {
+          display: true,
+          text: '90% CL',
+        },
       },
     },
   };
+  historyData$: Observable<ScatterData>;
+  chartDataObject$: Observable<chartJS.ChartData>;
 
-  constructor() {}
+  constructor(private historyDataService: HistoryDataService) {}
 
   ngOnInit() {
-    this.GetClfvTable();
+    this.historyDataService.fetchData();
+
+    this.chartDataObject$ = this.getChartDataObject$('year', 'CL90', [
+      'Year',
+      '90% CL',
+    ]);
   }
 
-  graphTable() {
-    const config = {
-      type: 'scatter',
-      data: this.CLFV_table,
-      options: {
-        scales: {
-          x: {
-            type: 'linear',
-            position: 'bottom',
+  getChartDataObject$(
+    x: plotableProps,
+    y: plotableProps,
+    labels: string[]
+  ): Observable<chartJS.ChartData> {
+    return this.historyDataService.chartData$(x, y).pipe(
+      map((data) => ({
+        datasets: [
+          {
+            data,
           },
-        },
-      },
-    };
+        ],
+        labels,
+      }))
+    );
   }
 
   async GetClfvTable() {
     const filePath = '../../assets/table_data_CLFV.xlsx';
 
-    this.CLFV_table = await this.GetJsonFromExcel(filePath);
-  }
-
-  async GetJsonFromExcel(filePath: string) {
-    const response = await fetch(filePath);
-    const blob = await response.blob();
-
-    return this.parseExcel(blob);
-  }
-
-  parseExcel(file: Blob | File) {
-    const reader = new FileReader();
-    let json_object: JSON[];
-
-    reader.onload = (e) => {
-      const data = e.target.result;
-      const workbook = XLSX.read(data, {
-        type: 'binary',
-      });
-
-      workbook.SheetNames.forEach((sheetName) => {
-        // Here is your object
-        json_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-        console.log(json_object);
-      });
+    // this.CLFV_table = await this.GetJsonFromExcel(filePath);
+    this.CLFV_table = {
+      datasets: [
+        {
+          data: [
+            { x: 10, y: 20 },
+            { x: 15, y: 10 },
+            { x: 20, y: 10 },
+          ],
+        },
+      ],
+      labels: ['data 1', 'data 2'],
     };
-
-    reader.onerror = (ex) => {
-      console.log(ex);
-    };
-
-    reader.readAsBinaryString(file);
-
-    return json_object;
+    // console.log(this.CLFV_table);
   }
 }

@@ -10,12 +10,17 @@
       <ion-title size="large">History of CLFV searches in muons </ion-title>
     </ion-toolbar>
   </ion-header>
-
-  <canvas
-    baseChart
-    [data]="CLFV_table"
-    [options]="chart_options"
-    [type]="'scatter'"
-  >
-  </canvas>
+  <ion-grid fixed>
+    <ion-row>
+      <ion-col size="10" offset="1">
+        <canvas
+          baseChart
+          [data]="chartDataObject$ | async"
+          [options]="chart_options"
+          [type]="'scatter'"
+        >
+        </canvas>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
