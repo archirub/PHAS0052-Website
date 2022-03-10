@@ -1,14 +1,24 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable object-shorthand */
+/* eslint-disable curly */
 import { Component, OnInit } from '@angular/core';
+
 import {
+  ChartOptions,
+  ChartData,
+  TooltipItem,
+  ChartTypeRegistry,
+  ScriptableContext,
+} from 'chart.js';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import {
+  Decay,
+  DecayOptions,
   HistoryDataService,
   plotableProps,
   ScatterData,
 } from './history-data.service';
-
-import * as chartJS from 'chart.js';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -16,22 +26,54 @@ import { map } from 'rxjs/operators';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  CLFV_table: chartJS.ChartData;
-  chart_options: chartJS.ChartOptions = {
+  CLFV_table: ChartData;
+  chart_options: ChartOptions = {
+    onHover: (event, elements, chart) => {
+      if (elements.length > 0)
+        console.log('elements', elements, 'event', event);
+
+      if (event.type === 'mouseout') {
+        // customTooltip.style.opacity = 0
+        // console.log('elements', elements);
+      }
+
+      if (event.type === 'mouseenter') {
+        // elements.style.opacity = 0
+      }
+    },
+    onClick: (event, elements, chart) => {
+      console.log('FUCKED YOU', elements, event);
+    },
+    plugins: {
+      tooltip: {
+        // enabled: false,
+        // external: (args) => {
+
+        // },
+        callbacks: {
+          // eslint-disable-next-line object-shorthand
+          // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+          label: (tooltipItem: TooltipItem<keyof ChartTypeRegistry>) => {
+            const decayValue = tooltipItem.dataset.label as Decay;
+
+            return `
+            Decay: ${decayValue} 
+            `;
+          },
+        },
+      },
+    },
     scales: {
       x: {
         display: true,
-        // title: 'ASDKALSDJLAJs',
         position: 'bottom',
         title: {
           display: true,
           text: 'Year',
         },
       },
-
       y: {
         display: true,
-        // type: 'logarithmic',
         ticks: {
           // Include a dollar sign in the ticks
           callback: (value, index, ticks) => '10E' + value,
@@ -44,52 +86,60 @@ export class HomePage implements OnInit {
     },
   };
   historyData$: Observable<ScatterData>;
-  chartDataObject$: Observable<chartJS.ChartData>;
+  chartDataObject$: Observable<ChartData>;
 
-  constructor(private historyDataService: HistoryDataService) {}
+  constructor(private historyDataService: HistoryDataService) {
+    // customToolTip.addEventListener('mouseout', () => {
+    //   customTooltip.style.opacity = 0;
+    // });
+    // customTooltip.addEventListener('mouseover', () => {
+    //   customTooltip.style.opacity = tooltipOpacity;
+    // });
+  }
 
   ngOnInit() {
     this.historyDataService.fetchData();
 
-    this.chartDataObject$ = this.getChartDataObject$('year', 'CL90', [
-      'Year',
-      '90% CL',
-    ]);
+    this.chartDataObject$ = this.getChartDataObject$('year', 'CL90');
   }
 
   getChartDataObject$(
     x: plotableProps,
-    y: plotableProps,
-    labels: string[]
-  ): Observable<chartJS.ChartData> {
+    y: plotableProps
+    // axisLabels: string[]
+  ): Observable<ChartData> {
     return this.historyDataService.chartData$(x, y).pipe(
-      map((data) => ({
-        datasets: [
-          {
-            data,
-          },
-        ],
-        labels,
-      }))
+      map((data) => {
+        const chartData: ChartData = this.initChartData(DecayOptions.length);
+
+        DecayOptions.forEach((decay, i) => {
+          chartData.datasets[i].data = this.historyDataService.historyToChart(
+            data[decay],
+            'year',
+            'CL90'
+          );
+          chartData.datasets[i].label = decay;
+
+          chartData.datasets[i].backgroundColor = (
+            context: ScriptableContext<'bar'>
+          ) => {
+            const decayValue = context.dataset.label as Decay;
+            if (decayValue === 'muNToEN') return 'red';
+            if (decayValue === 'muTo3E') return 'blue';
+            if (decayValue === 'muToEGamma') return 'green';
+          };
+        });
+
+        return chartData;
+      })
     );
   }
 
-  async GetClfvTable() {
-    const filePath = '../../assets/table_data_CLFV.xlsx';
-
-    // this.CLFV_table = await this.GetJsonFromExcel(filePath);
-    this.CLFV_table = {
-      datasets: [
-        {
-          data: [
-            { x: 10, y: 20 },
-            { x: 15, y: 10 },
-            { x: 20, y: 10 },
-          ],
-        },
-      ],
-      labels: ['data 1', 'data 2'],
+  initChartData(numberOfDatasets: number): ChartData {
+    return {
+      datasets: Array.from({ length: numberOfDatasets }).map(() => ({
+        data: [],
+      })),
     };
-    // console.log(this.CLFV_table);
   }
 }

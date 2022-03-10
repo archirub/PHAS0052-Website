@@ -9,8 +9,10 @@ export interface HistoryDataPoint {
   year: number;
   CL90: number; // 90% confidence level
   collaboration: string;
-  decay: string;
+  decay: Decay;
 }
+export const DecayOptions = ['muToEGamma', 'muNToEN', 'muTo3E'] as const;
+export type Decay = typeof DecayOptions[number];
 export type HistoryData = HistoryDataPoint[];
 export type ScatterData = chartJS.ScatterDataPoint[];
 // export type ScatterData = chartJS.ChartDataSets['data']; //DEv
@@ -19,6 +21,10 @@ export type plotableProps = Exclude<
   keyof HistoryDataPoint,
   'collaboration' | 'decay'
 >;
+
+type decaySortedHistoryData = {
+  [decay in typeof DecayOptions[number]]: HistoryData;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -31,10 +37,10 @@ export class HistoryDataService {
   public chartData$(
     x: plotableProps,
     y: plotableProps
-  ): Observable<ScatterData> {
+  ): Observable<decaySortedHistoryData> {
     return this.data$.pipe(
       filter((d) => !!d),
-      map((d) => this.historyToChart(d, x, y))
+      map((d) => this.splitDecays(d))
     );
   }
 
@@ -45,12 +51,24 @@ export class HistoryDataService {
   }
 
   // Converts
-  private historyToChart(
+  public historyToChart(
     data: HistoryData,
     x: plotableProps,
     y: plotableProps
   ): ScatterData {
     return data.map((dp) => ({ x: dp[x], y: this.log(dp[y], 10) }));
+  }
+
+  private splitDecays(data: HistoryData): decaySortedHistoryData {
+    const sortedHistoryData: decaySortedHistoryData = {
+      muNToEN: [],
+      muTo3E: [],
+      muToEGamma: [],
+    };
+
+    data.forEach((dp) => sortedHistoryData[dp.decay].push(dp));
+
+    return sortedHistoryData;
   }
 
   private async excelToHistory(filePath: string): Promise<HistoryData> {
