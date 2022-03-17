@@ -1,14 +1,7 @@
-/* eslint-disable object-shorthand */
 /* eslint-disable curly */
 import { Component, OnInit } from '@angular/core';
 
-import {
-  ChartOptions,
-  ChartData,
-  TooltipItem,
-  ChartTypeRegistry,
-  ScriptableContext,
-} from 'chart.js';
+import { ChartOptions, ChartData, ScriptableContext } from 'chart.js';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -16,9 +9,8 @@ import {
   Decay,
   DecayOptions,
   HistoryDataService,
-  plotableProps,
-  ScatterData,
 } from './history-data.service';
+import { ViolationGraphService } from './violation-graph.service';
 
 @Component({
   selector: 'app-home',
@@ -26,100 +18,51 @@ import {
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  CLFV_table: ChartData;
-  chart_options: ChartOptions = {
-    onHover: (event, elements, chart) => {
-      if (elements.length > 0)
-        console.log('elements', elements, 'event', event);
-
-      if (event.type === 'mouseout') {
-        // customTooltip.style.opacity = 0
-        // console.log('elements', elements);
-      }
-
-      if (event.type === 'mouseenter') {
-        // elements.style.opacity = 0
-      }
-    },
-    onClick: (event, elements, chart) => {
-      console.log('FUCKED YOU', elements, event);
-    },
-    plugins: {
-      tooltip: {
-        // enabled: false,
-        // external: (args) => {
-
-        // },
-        callbacks: {
-          // eslint-disable-next-line object-shorthand
-          // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-          label: (tooltipItem: TooltipItem<keyof ChartTypeRegistry>) => {
-            const decayValue = tooltipItem.dataset.label as Decay;
-
-            return `
-            Decay: ${decayValue} 
-            `;
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        display: true,
-        position: 'bottom',
-        title: {
-          display: true,
-          text: 'Year',
-        },
-      },
-      y: {
-        display: true,
-        ticks: {
-          // Include a dollar sign in the ticks
-          callback: (value, index, ticks) => '10E' + value,
-        },
-        title: {
-          display: true,
-          text: '90% CL',
-        },
-      },
-    },
-  };
-  historyData$: Observable<ScatterData>;
   chartDataObject$: Observable<ChartData>;
+  CLFV_table: ChartData;
+  chart_options: ChartOptions;
 
-  constructor(private historyDataService: HistoryDataService) {
-    // customToolTip.addEventListener('mouseout', () => {
-    //   customTooltip.style.opacity = 0;
-    // });
-    // customTooltip.addEventListener('mouseover', () => {
-    //   customTooltip.style.opacity = tooltipOpacity;
-    // });
-  }
+  constructor(
+    private historyDataService: HistoryDataService,
+    private violationGraphService: ViolationGraphService
+  ) {}
 
+  /**
+   * runs when the page is initialized
+   */
   ngOnInit() {
+    this.chart_options = this.violationGraphService.chart_options;
+
+    // gets the data from the csv file and adds it to the history data service
     this.historyDataService.fetchData();
 
-    this.chartDataObject$ = this.getChartDataObject$('year', 'CL90');
+    // This is for the template
+    this.chartDataObject$ = this.getChartDataObject$();
   }
 
-  getChartDataObject$(
-    x: plotableProps,
-    y: plotableProps
-    // axisLabels: string[]
-  ): Observable<ChartData> {
-    return this.historyDataService.chartData$(x, y).pipe(
+  /**
+   * formats the datapoints for display in the graph and returns
+   * an observable holding that object (for subscription in the template)
+   */
+  getChartDataObject$(): Observable<ChartData> {
+    return this.historyDataService.chartData$().pipe(
       map((data) => {
-        const chartData: ChartData = this.initChartData(DecayOptions.length);
+        const chartData: ChartData = this.getBlankChartData(
+          DecayOptions.length
+        );
 
         DecayOptions.forEach((decay, i) => {
+          // specifies the data
           chartData.datasets[i].data = this.historyDataService.historyToChart(
             data[decay],
             'year',
             'CL90'
           );
+
+          // specifies the label
           chartData.datasets[i].label = decay;
 
+          // Specifies the color of the data points based on the decay they concern
           chartData.datasets[i].backgroundColor = (
             context: ScriptableContext<'bar'>
           ) => {
@@ -135,7 +78,10 @@ export class HomePage implements OnInit {
     );
   }
 
-  initChartData(numberOfDatasets: number): ChartData {
+  /**
+   * returns a blank chart data object
+   */
+  private getBlankChartData(numberOfDatasets: number): ChartData {
     return {
       datasets: Array.from({ length: numberOfDatasets }).map(() => ({
         data: [],
