@@ -1,0 +1,165 @@
+<div #body>
+  <div class="fig">
+    Fig. 1. History of Searches for CLFV in muons. The y-axis gives the 90%
+    Confidence Level in the results obtained. The
+    <div [mathjax]="MuToEGamma"></div>
+    searches are shown in green, the
+    <div [mathjax]="MuNToEN"></div>
+    in red and the
+    <div [mathjax]="MuTo3E"></div>
+    in blue.
+  </div>
+
+  <div class="para">
+    The Standard Model divides particles into two categories, fermions and
+    bosons, based on their spin. Fermions (referring to particles that make up
+    matter, such as electrons, quarks and neutrinos), have half-integer spins.
+    Bosons (referring to particles that transmit forces, such as photons that
+    transmit electromagnetic force, gluons that transmit strong nuclear force,
+    and W and Z bosons that transmit the weak nuclear force) have integer spins
+    (all spin 1 here) [1].
+  </div>
+  <span></span>
+  <span></span>
+
+  <div class="para">
+    The well-established standard model sets rigorous criteria on the
+    possibilities of lepton decay. The three lepton numbers:
+    <div [mathjax]="L_e"></div>
+    ,
+    <div [mathjax]="L_mu"></div>
+    , and
+    <div [mathjax]="L_tau"></div>
+    which are electron, muon, and tau, electron numbers respectively must be
+    conserved in all interactions.
+  </div>
+  <div class="para">
+    However, Dr Takaaki Kajita and Dr Arthur McDonald with their SNO and
+    SuperKamiokande experiments contributed to discovering the existence of
+    neutrino oscillations. This told us that neutrinos have rest mass,
+    lepton-flavour mixing does exist and charged lepton flavour violation must
+    occur through oscillations in loops. Charged lepton flavour violation (CLFV)
+    involves decays whereby the lepton number is not conserved, therefore, any
+    evidence of CLFV is an unambiguous signal of physics beyond the Standard
+    Model. The experiments suggested that neutrino oscillations also violate
+    lepton number. Fundamentally, charge conservation holds across both charged
+    lepton flavour and standard lepton decays, thus making it entirely possible
+    that observations can be made for varying family lepton numbers (neutrino
+    oscillations) [2].
+  </div>
+  <div class="para">
+    The most powerful searches for CLPV have used the muon state due to the high
+    statistics available in muon beams. Currently the best limits set in the
+    muon sector have been produced by Paul Scherrer Institute (PSI), primarily
+    with
+    <div [ngStyle]="{ display: inline - block }" [mathjax]="MuToEGamma"></div>
+    and
+    <div [mathjax]="MuNToEN"></div>
+    decays and are discussing an
+    <div [mathjax]="MuTo3E"></div>
+    search. Experimental interest focuses on the Mu3e Experiment whereby
+    attempts would be made to record almost unobservable levels of this decay:
+    <div [mathjax]="MuToEEE"></div>
+    with branching sensitivity of
+    <div [mathjax]="lessThan10E16"></div>
+    . This experiment will push the limit on this decay by
+    <div [mathjax]="_10E4"></div>
+    and Mu2e pushes the
+    <div [mathjax]="MuNToEN"></div>
+    limit by the same factor. Fundamentally, CLFV can occur through loops, but
+    at unobservable small rates. Therefore, any observation of CLFV is an
+    observation of new physics.
+  </div>
+
+  <img class="diagram" src="../../assets/mu3e diagram.png" />
+
+  <div class="fig">
+    Fig. 2. Feynman diagram representing the
+    <div [mathjax]="MuToEEE"></div>
+    . Note the Z boson is the exchange particle.
+  </div>
+
+  <div class="para">
+    Subsequent upon the virtual unobservable nature of the Mu3e experiment, such
+    muon decays are therefore incredibly rare. As a result, the current Mu3e
+    experiment involves mass observation of more than
+    <div [mathjax]="_10E16"></div>
+    decays. Such high rates are achieved by using an intense muon beam,
+    producing
+    <div [mathjax]="moreThan10E9"></div>
+    muons/s [3]. Due to the extreme rarity of such decays, fundamental
+    importance is placed on background subtraction in order to filter out the
+    required decays [3] [4]. Statistically, by observing many decays, there is
+    greater sensitivity to processes with very small branching fractions (such
+    as CLFV) [5].
+  </div>
+  <div class="para">
+    Contemporary experiments such as ATLAS involve training deep neural network
+    machine-learning techniques to identify the kinematic properties of the
+    signal process as a method of
+    <span>hello</span>
+    acquiring the desired decays. Although ATLAS searches for Z bosons decaying
+    into two charged leptons of different flavours, it places emphasis on the
+    significance of analytical tools in searching for extremely rare decays [6].
+  </div>
+  <div class="para">
+    Whilst analytical tools are already in existence in searching for lepton
+    decays, this experimental task will involve adapting such techniques to
+    process and refine a large data set from ATLAS or CMS in the attempt to
+    search for the Mu3e decay. Current data analysis methods suggest algorithmic
+    techniques to produce a histogram for the decays [7]. Testing for the
+    preliminary success of the algorithm would be achieved by searching for
+    well-known decays such as
+    <div [mathjax]="ZToEE"></div>
+    and
+    <div [mathjax]="ZToMuMu"></div>
+    , and then deploying this algorithm to search for
+    <div [mathjax]="ZToEMu"></div>
+    (which is not predicted by the standard model). This decay can be connected
+    to low energy CLFV processes such as
+    <div [mathjax]="MuTo3E"></div>
+    and
+    <div [mathjax]="MuToEGamma"></div>
+    . Ultimately, the aim is to be able to compare the sensitivity of ATLAS/CMS
+    and Mu3e to the flavour-violating couplings of the Z boson.
+  </div>
+</div>
+<div class="space"></div>
+
+<div>
+  <h4>Bibliography</h4>
+  <div class="ref">
+    [1] Elert, G., 2022. The Standard Model. [online] The Physics Hypertextbook.
+    Available at: <https://physics.info/standard/> [Accessed 24 January 2022].
+  </div>
+  <div class="ref">
+    [2] “11.3: Particle Conservation Laws,” Physics LibreTexts, Nov. 01, 2016.
+    https://phys.libretexts.org/Bookshelves/University_Physics/Book%3A_University_Physics_(OpenStax)/Book%3A_University_Physics_III_-_Optics_and_Modern_Physics_(OpenStax)/11%3A_Particle_Physics_and_Cosmology/11.03%3A_Particle_Conservation_Laws#:~:text=For%20decay%20(a)%2C%20the
+    (accessed Jan. 23, 2022).
+  </div>
+  <div class="ref">
+    ‌[3] “Introduction | Mu3e | Paul Scherrer Institut (PSI),” www.psi.ch.
+    https://www.psi.ch/en/mu3e/introduction (accessed Jan. 23, 2022).
+  </div>
+  <div class="ref">
+    [4] S. Mihara, J. P. Miller, P. Paradisi, and G. Piredda, “Charged Lepton
+    Flavor–Violation Experiments,” Annual Review of Nuclear and Particle
+    Science, vol. 63, no. 1, pp. 531–552, Oct. 2013, doi:
+    10.1146/annurev-nucl-102912-144530.
+  </div>
+  <div class="ref">
+    [5] “UCL Mu3e,” www.hep.ucl.ac.uk. https://www.hep.ucl.ac.uk/muons/mu3e/
+    (accessed Jan. 23, 2022).
+  </div>
+  <div class="ref">
+    [6] “New ATLAS result marks milestone in the test of Standard Model
+    properties,” ATLAS.
+    https://atlas.cern/updates/briefing/test-lepton-flavour-violation (accessed
+    Jan. 23, 2022).
+  </div>
+  <div class="ref">
+    [7] R. Aaij, et al., “Search for the rare decays Bs0 +-and B0 +-,” European
+    Organization for Nuclear Resarch, Jan. 2012. Accessed: Jan. 23, 2022.
+    [Online]. Available: https://arxiv.org/pdf/1112.1600.pdf.
+  </div>
+</div>

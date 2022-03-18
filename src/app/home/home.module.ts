@@ -7,6 +7,9 @@ import { HomePage } from './home.page';
 import { NgChartsModule } from 'ng2-charts';
 
 import { HomePageRoutingModule } from './home-routing.module';
+import { MathjaxModule } from 'mathjax-angular';
+
+import { ParaComponent } from '../para/para.component';
 
 @NgModule({
   imports: [
@@ -15,7 +18,8 @@ import { HomePageRoutingModule } from './home-routing.module';
     FormsModule,
     IonicModule,
     HomePageRoutingModule,
+    MathjaxModule.forChild(),
   ],
-  declarations: [HomePage],
+  declarations: [HomePage, ParaComponent],
 })
 export class HomePageModule {}

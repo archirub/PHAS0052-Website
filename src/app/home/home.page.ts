@@ -58,18 +58,29 @@ export class HomePage implements OnInit {
             'year',
             'CL90'
           );
+          const muNToEN_label = 'mu N -> e N';
+          const muTo3E_label = 'mu-> 3e';
+          const muToEGamma_label = 'mu -> e gamma';
 
           // specifies the label
-          chartData.datasets[i].label = decay;
+          if (decay === 'muNToEN') {
+            chartData.datasets[i].label = muNToEN_label;
+          } else if (decay === 'muTo3E') {
+            chartData.datasets[i].label = muTo3E_label;
+          } else if (decay === 'muToEGamma') {
+            chartData.datasets[i].label = muToEGamma_label;
+          } else {
+            chartData.datasets[i].label = decay;
+          }
 
           // Specifies the color of the data points based on the decay they concern
           chartData.datasets[i].backgroundColor = (
             context: ScriptableContext<'bar'>
           ) => {
-            const decayValue = context.dataset.label as Decay;
-            if (decayValue === 'muNToEN') return 'red';
-            if (decayValue === 'muTo3E') return 'blue';
-            if (decayValue === 'muToEGamma') return 'green';
+            const decayValue = context.dataset.label;
+            if (decayValue === muNToEN_label) return 'red';
+            if (decayValue === muTo3E_label) return 'blue';
+            if (decayValue === muToEGamma_label) return 'green';
           };
         });
 
